@@ -5,76 +5,158 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Products - JWT Client</title>
     <style>
+        :root {
+            --p: #8b5cf6;
+            --pink: #ec4899;
+            --text: #3b2a5a;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: system-ui, sans-serif;
-            max-width: 760px;
+            font-family: "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+            max-width: 780px;
             margin: 2rem auto;
             padding: 0 1rem;
-            color: #222;
+            color: var(--text);
+            background: linear-gradient(160deg,#fdf2f8 0%,#ede9fe 50%,#e0f2fe 100%);
+            min-height: 100vh;
         }
 
         h1 {
-            margin-bottom: .25rem;
+            margin: 0 0 1rem;
+            font-size: 2.2rem;
+            background: linear-gradient(90deg,var(--p),var(--pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        h2 {
+            margin: 0 0 .75rem;
+            font-size: 1.1rem;
+            color: var(--p);
         }
 
         section {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 1rem 0;
+            background: rgba(255,255,255,.8);
+            border: 2px solid #fff;
+            border-radius: 22px;
+            padding: 1.2rem 1.4rem;
+            margin: 1.1rem 0;
+            box-shadow: 0 10px 25px rgba(139,92,246,.15);
         }
 
         input {
-            padding: .4rem;
-            margin: .2rem .2rem .2rem 0;
+            padding: .6rem .9rem;
+            margin: .2rem .3rem .2rem 0;
+            border: 2px solid #e9d5ff;
+            border-radius: 999px;
+            background: #fff;
+            color: var(--text);
         }
+
+            input:focus {
+                outline: none;
+                border-color: var(--pink);
+                box-shadow: 0 0 0 4px rgba(236,72,153,.15);
+            }
 
         button {
-            padding: .4rem .8rem;
+            padding: .6rem 1.3rem;
+            border: 0;
+            border-radius: 999px;
+            background: linear-gradient(90deg,var(--p),var(--pink));
+            color: #fff;
+            font-weight: 700;
             cursor: pointer;
+            box-shadow: 0 4px 12px rgba(139,92,246,.35);
+            transition: transform .12s;
         }
 
+            button:hover {
+                transform: translateY(-2px) scale(1.03);
+            }
+
         table {
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0 6px;
             width: 100%;
         }
 
-        th, td {
-            border-bottom: 1px solid #eee;
-            padding: .4rem;
+        th {
+            font-size: .78rem;
+            color: #a78bfa;
+            text-align: left;
+            padding: .2rem .6rem;
+        }
+
+        td {
+            background: #fff;
+            padding: .6rem;
             text-align: left;
         }
 
+            td:first-child {
+                border-radius: 14px 0 0 14px;
+            }
+
+            td:last-child {
+                border-radius: 0 14px 14px 0;
+            }
+
+            td button {
+                background: #fecdd3;
+                color: #be123c;
+                box-shadow: none;
+                padding: .3rem .9rem;
+            }
+
         .msg {
             min-height: 1.2em;
-            font-size: .9rem;
+            font-size: .92rem;
+            font-weight: 600;
+            margin: .5rem 0 0;
         }
 
         .ok {
-            color: #1a7f37;
+            color: #059669;
         }
 
         .err {
-            color: #b42318;
+            color: #e11d48;
         }
 
         #status {
-            background: #f4f6f8;
-            padding: .5rem 1rem;
-            border-radius: 8px;
+            background: #fff;
+            border: 2px solid #fbcfe8;
+            padding: .7rem 1.2rem;
+            border-radius: 999px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 6px 16px rgba(236,72,153,.12);
+        }
+
+        #logoutBtn {
+            background: #fff;
+            color: var(--pink);
+            border: 2px solid var(--pink);
+            box-shadow: none;
         }
     </style>
 </head>
 <body>
     <h1>Products</h1>
 
+
     <div id="status">
         <span id="whoami">Not logged in</span>
         <button id="logoutBtn" onclick="logout()" style="display:none">Logout</button>
     </div>
+
 
     <section>
         <h2>Register</h2>
@@ -86,6 +168,7 @@
         <p id="regMsg" class="msg"></p>
     </section>
 
+
     <section>
         <h2>Login</h2>
         <form id="loginForm">
@@ -96,6 +179,7 @@
         <p id="loginMsg" class="msg"></p>
     </section>
 
+
     <section>
         <h2>Product list (public)</h2>
         <table>
@@ -104,8 +188,9 @@
         </table>
     </section>
 
+
     <section>
-        <h2>Add product (Admin only)</h2>
+        <h2>Add product</h2>
         <form id="addForm">
             <input id="pName" placeholder="Name" required />
             <input id="pPrice" type="number" step="0.01" placeholder="Price" required />
@@ -114,10 +199,10 @@
         <p id="addMsg" class="msg"></p>
     </section>
 
+
     <script>
-        // Same origin as the API (served from wwwroot). If you open this file with
-        // Live Server (:5500) instead, change BASE to "http://localhost:5000".
-        const BASE = "";
+        const BASE = "http://localhost:7125";
+
 
         // ---------- helpers ----------
         function decodeToken(token) {
@@ -126,6 +211,7 @@
                 return JSON.parse(atob(b64));
             } catch { return null; }
         }
+
 
         function showUser() {
             const token = localStorage.getItem("token");
@@ -145,11 +231,13 @@
             }
         }
 
+
         function setMsg(id, text, ok) {
             const el = document.getElementById(id);
             el.textContent = text;
             el.className = "msg " + (ok ? "ok" : "err");
         }
+
 
         // ---------- authFetch: attaches the Bearer token, handles 401/403 in one place ----------
         async function authFetch(url, options = {}) {
@@ -157,11 +245,13 @@
             options.headers = options.headers || {};
             if (token) options.headers["Authorization"] = "Bearer " + token;
 
+
             const res = await fetch(url, options);
             if (res.status === 401) alert("Please log in again.");            // not authenticated
             if (res.status === 403) alert("You are not allowed to do that."); // wrong role
             return res;
         }
+
 
         // ---------- Register ----------
         document.getElementById("registerForm").addEventListener("submit", async (e) => {
@@ -177,6 +267,7 @@
             if (res.ok) setMsg("regMsg", "Registered - now log in.", true);
             else setMsg("regMsg", "Register failed (" + res.status + ")", false);
         });
+
 
         // ---------- Login: store the token ----------
         document.getElementById("loginForm").addEventListener("submit", async (e) => {
@@ -197,6 +288,7 @@
             loadAll();
         });
 
+
         // ---------- Logout ----------
         function logout() {
             localStorage.removeItem("token");
@@ -204,6 +296,7 @@
             showUser();
             loadAll();
         }
+
 
         // ---------- Products ----------
         async function loadAll() {
@@ -229,6 +322,7 @@
             }
         }
 
+
         // Admin-only: Add (goes through authFetch)
         async function addProduct(name, price) {
             const res = await authFetch(BASE + "/api/products", {
@@ -240,6 +334,7 @@
             if (res.ok) loadAll();
         }
 
+
         // Admin-only: Delete (goes through authFetch)
         async function deleteProduct(id) {
             const res = await authFetch(BASE + "/api/products/" + id, { method: "DELETE" });
@@ -247,14 +342,15 @@
             if (res.ok) loadAll();
         }
 
+
         document.getElementById("addForm").addEventListener("submit", (e) => {
             e.preventDefault();
             addProduct(document.getElementById("pName").value, document.getElementById("pPrice").value);
             e.target.reset();
         });
 
+
         showUser();
-        loadAll();
-    </script>
+        loadAll();</script>
 </body>
 </html>

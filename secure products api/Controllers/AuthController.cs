@@ -34,8 +34,11 @@ public class AuthController : ControllerBase
 
         var user = new User { Id = _nextId++, Username = req.Username };
 
+        // Lab shortcut: the username "admin" becomes the one Admin account.
+        // (Not safe for production - anyone could claim the name first.)
         user.Role = (req.Username == "admin") ? "Admin" : "User";
-        _users.Add(user);
+
+        // PasswordHasher salts + hashes; the plaintext password is never stored.
         user.PasswordHash = _hasher.HashPassword(user, req.Password);
         _users.Add(user);
 
@@ -47,11 +50,11 @@ public class AuthController : ControllerBase
     public IActionResult Login(AuthRequest req)
     {
         var user = _users.FirstOrDefault(u => u.Username == req.Username);
-        if (user is null) return Unauthorized("Invalid credentials."); 
+        if (user is null) return Unauthorized("Invalid credentials.");   // deliberately vague
 
         var check = _hasher.VerifyHashedPassword(user, user.PasswordHash, req.Password);
         if (check == PasswordVerificationResult.Failed)
-            return Unauthorized("Invalid credentials.");                 
+            return Unauthorized("Invalid credentials.");                 // same message
 
         return Ok(new { token = CreateToken(user) });
     }
@@ -62,7 +65,7 @@ public class AuthController : ControllerBase
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.Username),
-            new Claim(ClaimTypes.Role, user.Role)  
+            new Claim(ClaimTypes.Role, user.Role)   // drives [Authorize(Roles=...)]
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));

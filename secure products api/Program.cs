@@ -26,15 +26,19 @@ builder.Services
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 
-builder.Services.AddCors(o => o.AddDefaultPolicy(p =>
-    p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+        policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+});
 
 var app = builder.Build();
 
-app.UseDefaultFiles();  
-app.UseStaticFiles();   
-
-app.UseCors();
+app.UseHttpsRedirection();
+app.UseCors();               
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
 
 app.UseAuthentication();   
 app.UseAuthorization();  

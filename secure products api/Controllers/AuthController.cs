@@ -35,7 +35,7 @@ public class AuthController : ControllerBase
         var user = new User { Id = _nextId++, Username = req.Username };
 
         user.Role = (req.Username == "admin") ? "Admin" : "User";
-
+        _users.Add(user);
         user.PasswordHash = _hasher.HashPassword(user, req.Password);
         _users.Add(user);
 

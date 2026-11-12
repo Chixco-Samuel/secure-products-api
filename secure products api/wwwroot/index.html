@@ -4,257 +4,532 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Products Client</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --black: #0a0a0a;
+            --panel: #141414;
+            --panel-2: #1c1c1c;
+            --line: #2a2a2a;
+            --text: #f2f2f2;
+            --muted: #9a9a9a;
+            --orange: #ff6a00;
+            --orange-soft: #ff8a33;
+            --ok: #3ddc84;
+            --err: #ff5252;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: system-ui, sans-serif;
-            max-width: 760px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-            color: #222;
+            margin: 0;
+            background: var(--black);
+            color: var(--text);
+            font-family: "Space Grotesk", system-ui, sans-serif;
+            line-height: 1.5;
         }
 
-        h1, h2 {
-            margin-bottom: .4rem;
+        header {
+            border-bottom: 2px solid var(--orange);
+            background: var(--panel);
         }
 
-        section {
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            padding: 1rem;
-            margin-bottom: 1rem;
+        .bar {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+        }
+
+        .mark {
+            width: 34px;
+            height: 34px;
+            background: var(--orange);
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            color: var(--black);
+            font-weight: 700;
+        }
+
+        .brand h1 {
+            font-size: 1.25rem;
+            margin: 0;
+            font-weight: 700;
+            letter-spacing: -.01em;
+        }
+
+        .userpill {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            background: var(--panel-2);
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: .3rem .4rem .3rem .9rem;
+        }
+
+            .userpill .name {
+                font-weight: 500;
+            }
+
+        .badge {
+            font-size: .75rem;
+            font-weight: 700;
+            padding: .1rem .55rem;
+            border-radius: 999px;
+            background: var(--orange);
+            color: var(--black);
+        }
+
+            .badge.user {
+                background: transparent;
+                color: var(--orange-soft);
+                border: 1px solid var(--orange);
+            }
+
+        main {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 1.5rem 1.25rem 4rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        @media (max-width: 720px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-left: 4px solid var(--orange);
+            border-radius: 10px;
+            padding: 1.25rem;
+        }
+
+            .card h2 {
+                margin: 0 0 .25rem;
+                font-size: 1.15rem;
+            }
+
+            .card p.hint {
+                margin: 0 0 1rem;
+                color: var(--muted);
+                font-size: .9rem;
+            }
+
+        .row {
+            display: flex;
+            gap: .6rem;
+            flex-wrap: wrap;
         }
 
         input {
-            padding: .4rem;
-            margin: .2rem .2rem .2rem 0;
+            flex: 1 1 140px;
+            background: var(--black);
+            color: var(--text);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: .6rem .75rem;
+            font: inherit;
         }
 
+            input::placeholder {
+                color: #666;
+            }
+
+            input:focus-visible, button:focus-visible {
+                outline: 2px solid var(--orange);
+                outline-offset: 2px;
+            }
+
         button {
-            padding: .4rem .8rem;
+            font: inherit;
+            font-weight: 700;
             cursor: pointer;
+            border-radius: 8px;
+            padding: .6rem 1.1rem;
+            border: 1px solid var(--orange);
+            background: var(--orange);
+            color: var(--black);
+            transition: background .15s, color .15s;
+        }
+
+            button:hover {
+                background: var(--orange-soft);
+            }
+
+            button.ghost {
+                background: transparent;
+                color: var(--orange-soft);
+            }
+
+                button.ghost:hover {
+                    background: var(--orange);
+                    color: var(--black);
+                }
+
+            button.small {
+                padding: .3rem .7rem;
+                font-size: .85rem;
+            }
+
+        .tablewrap {
+            overflow-x: auto;
+            margin-top: 1rem;
         }
 
         table {
-            border-collapse: collapse;
             width: 100%;
+            border-collapse: collapse;
         }
 
-        th, td {
-            border-bottom: 1px solid #ddd;
-            padding: .4rem;
+        th {
             text-align: left;
+            color: var(--muted);
+            font-weight: 500;
+            font-size: .85rem;
+            padding: .5rem .6rem;
+            border-bottom: 1px solid var(--orange);
         }
 
-        #authMessage, #productMessage {
-            min-height: 1.2rem;
-            font-weight: 600;
+        td {
+            padding: .7rem .6rem;
+            border-bottom: 1px solid var(--line);
+        }
+
+            td.price {
+                color: var(--orange-soft);
+                font-weight: 700;
+            }
+
+            td.empty {
+                color: var(--muted);
+                text-align: center;
+                padding: 1.5rem;
+            }
+
+        tbody tr:hover {
+            background: var(--panel-2);
+        }
+
+        td.actions {
+            text-align: right;
         }
 
         .hidden {
-            display: none;
+            display: none !important;
         }
 
-        .ok {
-            color: #1a7f37;
+        #toast {
+            position: fixed;
+            right: 1.25rem;
+            bottom: 1.25rem;
+            max-width: 320px;
+            background: var(--panel-2);
+            border: 1px solid var(--line);
+            border-left: 4px solid var(--ok);
+            border-radius: 8px;
+            padding: .75rem 1rem;
+            opacity: 0;
+            transform: translateY(8px);
+            pointer-events: none;
+            transition: opacity .2s, transform .2s;
         }
 
-        .err {
-            color: #c0392b;
+            #toast.show {
+                opacity: 1;
+                transform: none;
+            }
+
+            #toast.err {
+                border-left-color: var(--err);
+            }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition: none !important;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Products Client</h1>
 
-    <section id="userBar" class="hidden">
-        Logged in as <strong id="currentUser"></strong>
-        <button onclick="logout()">Logout</button>
-    </section>
+    <header>
+        <div class="bar">
+            <div class="brand">
+                <div class="mark">P</div>
+                <h1>Products Client</h1>
+            </div>
 
-    <div id="authForms">
-        <section>
-            <h2>Register</h2>
-            <input id="regUsername" placeholder="Username">
-            <input id="regPassword" type="password" placeholder="Password">
-            <button onclick="register()">Register</button>
-        </section>
-
-        <section>
-            <h2>Login</h2>
-            <input id="loginUsername" placeholder="Username">
-            <input id="loginPassword" type="password" placeholder="Password">
-            <button onclick="login()">Login</button>
-        </section>
-    </div>
-    <p id="authMessage"></p>
-
-    <section>
-        <h2>Products</h2>
-
-        <div id="addForm">
-            <input id="prodName" placeholder="Name">
-            <input id="prodPrice" type="number" step="0.01" placeholder="Price">
-            <button onclick="addProduct()">Add</button>
+            <div id="userBar" class="userpill hidden">
+                <span class="name" id="currentUser"></span>
+                <span class="badge" id="roleBadge"></span>
+                <button class="ghost small" onclick="logout()">Logout</button>
+            </div>
         </div>
-        <p id="productMessage"></p>
+    </header>
 
-        <table>
-            <thead>
-                <tr><th>ID</th><th>Name</th><th>Price</th><th></th></tr>
-            </thead>
-            <tbody id="productRows"></tbody>
-        </table>
-    </section>
+    <main>
+
+        <div class="grid" id="authForms">
+            <section class="card">
+                <h2>Create an account</h2>
+                <p class="hint">New accounts are regular users. Register as "admin" to manage products.</p>
+                <div class="row">
+                    <input id="regUsername" placeholder="Username" autocomplete="username">
+                    <input id="regPassword" type="password" placeholder="Password" autocomplete="new-password">
+                    <button onclick="register()">Register</button>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>Log in</h2>
+                <p class="hint">Your token is saved in this browser until you log out.</p>
+                <div class="row">
+                    <input id="loginUsername" placeholder="Username" autocomplete="username">
+                    <input id="loginPassword" type="password" placeholder="Password" autocomplete="current-password">
+                    <button onclick="login()">Login</button>
+                </div>
+            </section>
+        </div>
+
+        <section class="card">
+            <h2>Products</h2>
+            <p class="hint">Anyone can view the list. Adding and deleting needs an admin login.</p>
+
+            <div class="row">
+                <input id="prodName" placeholder="Product name">
+                <input id="prodPrice" type="number" step="0.01" placeholder="Price">
+                <button onclick="addProduct()">Add product</button>
+            </div>
+
+            <div class="tablewrap">
+                <table>
+                    <thead>
+                        <tr><th>ID</th><th>Name</th><th>Price</th><th></th></tr>
+                    </thead>
+                    <tbody id="productRows"></tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="toast" role="status" aria-live="polite"></div>
 
     <script>
+
         const API = "https://localhost:7125";
 
-    function showAuth(text, ok = true) {
-      const el = document.getElementById("authMessage");
-      el.textContent = text;
-      el.className = ok ? "ok" : "err";
-    }
-
-    function showProduct(text, ok = true) {
-      const el = document.getElementById("productMessage");
-      el.textContent = text;
-      el.className = ok ? "ok" : "err";
-    }
-
-    async function authFetch(url, options = {}) {
-      const token = localStorage.getItem("token");
-      const headers = { ...(options.headers || {}) };
-      if (token) headers["Authorization"] = `Bearer ${token}`;
-      return fetch(url, { ...options, headers });
-    }
-
-    async function register() {
-      const username = document.getElementById("regUsername").value.trim();
-      const password = document.getElementById("regPassword").value;
-
-      try {
-        const res = await fetch(`${API}/api/auth/register`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password })
-        });
-        showAuth(res.ok ? "Registered! You can log in now." : "Registration failed.", res.ok);
-      } catch (e) {
-        showAuth("Could not reach the API. Check the port and CORS.", false);
-      }
-    }
-
-    async function login() {
-      const username = document.getElementById("loginUsername").value.trim();
-      const password = document.getElementById("loginPassword").value;
-
-      try {
-        const res = await fetch(`${API}/api/auth/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password })
-        });
-
-        if (!res.ok) {
-          showAuth("Login failed. Check your username and password.", false);
-          return;
+        let toastTimer;
+        function notify(text, ok = true) {
+            const el = document.getElementById("toast");
+            el.textContent = text;
+            el.className = "show" + (ok ? "" : " err");
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => el.classList.remove("show"), 3500);
         }
 
-        const data = await res.json();
-        localStorage.setItem("token", data.token); 
-        localStorage.setItem("username", username); 
-        showAuth("Logged in!");
+        function parseJwt(token) {
+            try {
+                const b64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+                const json = decodeURIComponent(
+                    atob(b64).split("").map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2)).join("")
+                );
+                return JSON.parse(json);
+            } catch {
+                return null;
+            }
+        }
+
+        function getRole(token) {
+            const p = parseJwt(token);
+            if (!p) return "";
+            return p["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || p.role || "";
+        }
+
+        async function authFetch(url, options = {}) {
+            const token = localStorage.getItem("token");
+            const headers = { ...(options.headers || {}) };
+            if (token) headers["Authorization"] = `Bearer ${token}`;
+            return fetch(url, { ...options, headers });
+        }
+
+        async function register() {
+            const username = document.getElementById("regUsername").value.trim();
+            const password = document.getElementById("regPassword").value;
+
+            try {
+                const res = await fetch(`${API}/api/auth/register`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password })
+                });
+                notify(res.ok ? "Registered. You can log in now." : "Registration failed.", res.ok);
+            } catch {
+                notify("Could not reach the API. Check the port and CORS.", false);
+            }
+        }
+
+        async function login() {
+            const username = document.getElementById("loginUsername").value.trim();
+            const password = document.getElementById("loginPassword").value;
+
+            try {
+                const res = await fetch(`${API}/api/auth/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (!res.ok) {
+                    notify("Login failed. Check your username and password.", false);
+                    return;
+                }
+
+                const data = await res.json();
+                localStorage.setItem("token", data.token);
+                localStorage.setItem("username", username);
+                notify("Logged in.");
+                updateUI();
+            } catch {
+                notify("Could not reach the API. Check the port and CORS.", false);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem("token");
+            localStorage.removeItem("username");
+            notify("Logged out.");
+            updateUI();
+        }
+        function updateUI() {
+            const token = localStorage.getItem("token");
+            const username = localStorage.getItem("username") || "";
+            const loggedIn = !!token;
+
+            document.getElementById("userBar").classList.toggle("hidden", !loggedIn);
+            document.getElementById("authForms").classList.toggle("hidden", loggedIn);
+            document.getElementById("currentUser").textContent = username;
+
+            const badge = document.getElementById("roleBadge");
+            const role = loggedIn ? getRole(token) : "";
+            badge.textContent = role || "User";
+            badge.className = "badge" + (role === "Admin" ? "" : " user");
+        }
+
+        async function loadProducts() {
+            const tbody = document.getElementById("productRows");
+            tbody.innerHTML = "";
+
+            try {
+                const res = await fetch(`${API}/api/products`);
+                if (!res.ok) { notify("Could not load products.", false); return; }
+
+                const products = await res.json();
+
+                if (products.length === 0) {
+                    tbody.innerHTML = '<tr><td class="empty" colspan="4">No products yet. Log in as admin to add the first one.</td></tr>';
+                    return;
+                }
+
+                for (const p of products) {
+                    const tr = document.createElement("tr");
+
+                    const id = document.createElement("td");
+                    id.textContent = p.id;
+
+                    const name = document.createElement("td");
+                    name.textContent = p.name;  
+
+                    const price = document.createElement("td");
+                    price.className = "price";
+                    const n = Number(p.price);
+                    price.textContent = isNaN(n) ? p.price : n.toFixed(2);
+
+                    const actions = document.createElement("td");
+                    actions.className = "actions";
+                    const del = document.createElement("button");
+                    del.className = "ghost small";
+                    del.textContent = "Delete";
+                    del.onclick = () => deleteProduct(p.id);
+                    actions.appendChild(del);
+
+                    tr.append(id, name, price, actions);
+                    tbody.appendChild(tr);
+                }
+            } catch {
+                notify("Could not reach the API. Check the port and CORS.", false);
+            }
+        }
+
+        async function addProduct() {
+            const name = document.getElementById("prodName").value.trim();
+            const price = parseFloat(document.getElementById("prodPrice").value);
+
+            const res = await authFetch(`${API}/api/products`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, price })
+            });
+
+            if (handleAuthErrors(res)) return;
+            if (!res.ok) { notify("Could not add the product.", false); return; }
+
+            notify("Product added.");
+            document.getElementById("prodName").value = "";
+            document.getElementById("prodPrice").value = "";
+            loadProducts();
+        }
+
+
+        async function deleteProduct(id) {
+            const res = await authFetch(`${API}/api/products/${id}`, { method: "DELETE" });
+
+            if (handleAuthErrors(res)) return;
+            if (!res.ok) { notify("Could not delete the product.", false); return; }
+
+            notify("Product deleted.");
+            loadProducts();
+        }
+
+        function handleAuthErrors(res) {
+            if (res.status === 401) {
+                notify("401: please log in first.", false);
+                return true;
+            }
+            if (res.status === 403) {
+                notify("403: only admins can do that.", false);
+                return true;
+            }
+            return false;
+        }
+
         updateUI();
         loadProducts();
-      } catch (e) {
-        showAuth("Could not reach the API. Check the port and CORS.", false);
-      }
-    }
-
-    function logout() {
-      localStorage.removeItem("token");
-      localStorage.removeItem("username");
-      showAuth("Logged out.");
-      updateUI();
-      loadProducts();
-    }
-
-    function updateUI() {
-      const token = localStorage.getItem("token");
-      const username = localStorage.getItem("username");
-      const loggedIn = !!token;
-
-      document.getElementById("userBar").classList.toggle("hidden", !loggedIn);
-      document.getElementById("authForms").classList.toggle("hidden", loggedIn);
-      document.getElementById("currentUser").textContent = username || "";
-    }
-
-    async function loadProducts() {
-      const tbody = document.getElementById("productRows");
-      tbody.innerHTML = "";
-
-      try {
-        const res = await fetch(`${API}/api/products`);
-        if (!res.ok) { showProduct("Could not load products.", false); return; }
-
-        const products = await res.json();
-        for (const p of products) {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${p.id}</td>
-            <td></td>
-            <td>${p.price}</td>
-            <td><button onclick="deleteProduct(${p.id})">Delete</button></td>`;
-          tr.children[1].textContent = p.name; 
-          tbody.appendChild(tr);
-        }
-      } catch (e) {
-        showProduct("Could not reach the API. Check the port and CORS.", false);
-      }
-    }
-
-    async function addProduct() {
-      const name = document.getElementById("prodName").value.trim();
-      const price = parseFloat(document.getElementById("prodPrice").value);
-
-      const res = await authFetch(`${API}/api/products`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, price })
-      });
-
-      if (handleAuthErrors(res)) return;
-      if (!res.ok) { showProduct("Could not add the product.", false); return; }
-
-      showProduct("Product added.");
-      document.getElementById("prodName").value = "";
-      document.getElementById("prodPrice").value = "";
-      loadProducts();
-    }
-
-    async function deleteProduct(id) {
-      const res = await authFetch(`${API}/api/products/${id}`, { method: "DELETE" });
-
-      if (handleAuthErrors(res)) return;
-      if (!res.ok) { showProduct("Could not delete the product.", false); return; }
-
-      showProduct("Product deleted.");
-      loadProducts();
-    }
-
-    function handleAuthErrors(res) {
-      if (res.status === 401) {
-        showProduct("Please log in first.", false);
-        return true;
-      }
-      if (res.status === 403) {
-        showProduct("Only admins can do that.", false);
-        return true;
-      }
-      return false;
-    }
-
-    updateUI();
-    loadProducts();</script>
+    </script>
 </body>
 </html>
